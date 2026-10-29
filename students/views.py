@@ -60,3 +60,23 @@ def get_student_by_id(request, id=None):
         })
     except Student.DoesNotExist:
         return JsonResponse({"status": "error", "message": "Student not found"}, status=404)
+
+
+@csrf_exempt
+def delete_student(request, id=None):
+    if request.method != "DELETE":
+        return JsonResponse({"status": "error", "message": "Invalid request"}, status=405)
+
+    student_id = id or request.GET.get("id")
+    if not student_id:
+        return JsonResponse({"status": "error", "message": "Student ID is required"}, status=400)
+
+    try:
+        student = Student.objects.get(pk=student_id)
+        student.delete()
+        return JsonResponse({"status": "success", "message": "Student deleted"})
+    except Student.DoesNotExist:
+        return JsonResponse({"status": "error", "message": "Student not found"}, status=404)
+    
+
+    
